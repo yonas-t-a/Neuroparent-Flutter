@@ -26,8 +26,13 @@ export async function login(req, res) {
         );
         // respond all the user Informatoin
         res.status(200).json({ 
-            token, 
-            
+            token,
+            user: {
+                user_id: user.user_id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            }   
          });
     } catch (error) {
         res.status(500).json({ error: "Login failed" });
@@ -35,7 +40,7 @@ export async function login(req, res) {
 }
 
 export async function register(req, res) {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password)
         return res.status(400).json({ error: "All fields are required" });
@@ -46,7 +51,7 @@ export async function register(req, res) {
             return res.status(409).json({ error: "User already exists" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await userModel.createUser({ name, email, password: hashedPassword });
+        const newUser = await userModel.createUser({ name, email, password: hashedPassword, role });
         res.status(201).json({ message: "User registered successfully", user: newUser });
     } catch (error) {
         res.status(500).json({ error: "Registration failed" });
