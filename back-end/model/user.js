@@ -12,7 +12,8 @@ const userModel = {
 
     async createUser(user) {
         const [result] = await pool.query('INSERT INTO user SET ?', [user]);
-        return result;
+        const [rows] = await pool.query('SELECT * FROM user WHERE user_id = ?', [result.insertId]);
+        return rows[0];
     },
 
     async updateUser(id, user) {
