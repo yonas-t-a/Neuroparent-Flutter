@@ -6,7 +6,8 @@ import '../admin/home_page.dart';
 import '../user/home_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final void Function(String role)? onLogin;
+  const LoginPage({this.onLogin, super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -24,21 +25,9 @@ class _LoginPageState extends State<LoginPage> {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthFailure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.error)));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
           } else if (state is AuthSuccess) {
-            if (state.user.role == 'admin') {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => AdminHomePage()),
-              );
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => UserHomePage()),
-              );
-            }
+            widget.onLogin?.call(state.user.role);
           }
         },
         child: Scaffold(
