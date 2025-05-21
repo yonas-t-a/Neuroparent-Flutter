@@ -12,28 +12,42 @@ class _CreateEventPageState extends State<CreateEventPage> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
 
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _timeController.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: selectedDate ?? DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        _dateController.text = "${picked.toLocal()}".split(' ')[0];
       });
+    }
   }
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: selectedTime ?? TimeOfDay.now(),
     );
-    if (picked != null && picked != selectedTime)
+    if (picked != null && picked != selectedTime) {
       setState(() {
         selectedTime = picked;
+        _timeController.text = picked.format(context);
       });
+    }
   }
 
   @override
@@ -64,7 +78,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    Expanded(child: _buildTextField("Date", enabled: false, value: selectedDate != null ? "${selectedDate!.toLocal()}".split(' ')[0] : '')),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _dateController,
+                        readOnly: true,
+                        decoration: _inputDecoration("Date"),
+                        onTap: () => _selectDate(context),
+                      ),
+                    ),
                     IconButton(
                       icon: Icon(Icons.calendar_today, color: Colors.blue),
                       onPressed: () => _selectDate(context),
@@ -74,7 +95,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    Expanded(child: _buildTextField("Time", enabled: false, value: selectedTime?.format(context) ?? '')),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _timeController,
+                        readOnly: true,
+                        decoration: _inputDecoration("Time"),
+                        onTap: () => _selectTime(context),
+                      ),
+                    ),
                     IconButton(
                       icon: Icon(Icons.access_time, color: Colors.blue),
                       onPressed: () => _selectTime(context),
@@ -85,7 +113,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 DropdownButtonFormField<String>(
                   decoration: _inputDecoration("Category"),
                   value: selectedCategory,
-                  items: [ 
+                  items: [
                     'ASD',
                     'ADHD',
                     'Dyslexia',
@@ -94,7 +122,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     'Tourette Syndrome',
                     'OCD',
                     'Bipolar',
-                    'Anxiety',]
+                    'Anxiety',
+                  ]
                       .map((category) => DropdownMenuItem(
                             value: category,
                             child: Text(category),
