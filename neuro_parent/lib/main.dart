@@ -3,6 +3,10 @@ import 'auth/login_page.dart';
 import 'auth/signup_page.dart';
 import 'admin/navigation.dart';
 import 'user/navigation.dart';
+import 'admin/articles/create_article.dart';
+import 'admin/articles/edit_article.dart';
+import 'admin/events/create_event.dart';
+import 'admin/events/edit_event.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +41,12 @@ class _MyAppState extends State<MyApp> {
       title: 'NeuroParent',
       debugShowCheckedModeBanner: false,
       home: child,
+      routes: {
+        '/articles/create_article': (context) => CreateArticlePage(),
+        '/articles/edit_article': (context) => EditArticlePage(),
+        '/events/create_event': (context) => CreateEventPage(),
+        '/events/edit_event': (context) => EditEventPage(),
+      },
     );
   }
 }

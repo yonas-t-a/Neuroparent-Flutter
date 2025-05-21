@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'navigation.dart';
 
 class AddPage extends StatelessWidget {
+  final void Function(AdminRoute route)? onNavigate;
+  const AddPage({this.onNavigate, super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,14 +28,14 @@ class AddPage extends StatelessWidget {
               context,
               title: 'Tips and Tricks',
               subtitle: 'Add tips and tricks',
-              onTap: () => Navigator.pushNamed(context, '/articles/create_article'),
+              onTap: () => onNavigate?.call(AdminRoute.createArticle),
             ),
             SizedBox(height: 16),
             _buildClickableCard(
               context,
               title: '31 Event',
               subtitle: 'Add Event',
-              onTap: () => Navigator.pushNamed(context, '/events/create_event'),
+              onTap: () => onNavigate?.call(AdminRoute.createEvent),
             ),
             SizedBox(height: 32),
             Text(
@@ -47,14 +50,14 @@ class AddPage extends StatelessWidget {
               context,
               title: 'Tips and Tricks',
               subtitle: 'Edit my tips and tricks',
-              onTap: () => Navigator.pushNamed(context, '/articles/edit_article'),
+              onTap: () => onNavigate?.call(AdminRoute.editArticle),
             ),
             SizedBox(height: 16),
             _buildClickableCard(
               context,
               title: '31 Event',
               subtitle: 'Edit my Event',
-              onTap: () => Navigator.pushNamed(context, '/events/edit_event'),
+              onTap: () => onNavigate?.call(AdminRoute.editEvent),
             ),
           ],
         ),
