@@ -22,32 +22,60 @@ export async function getEventById(req, res) {
     }
 }
 export async function createEvent(req, res) {
+    console.log(req.body);
     // Validate the request body
-    const { title, description, date, time, location, category } = req.body;
-    if (!title || !description || !date || !time || !location || !category) {
+    const { title, description, date, time, location, category, creator_id } = req.body;
+
+    console.log("Creating event with data:", req.body);
+    if (!title || !description || !date || !time || !location || !category || !creator_id) {
         return res.status(400).json({ error: "All fields are required" });
     }
+    const eventData = {
+        event_title: title,
+        event_description: description,
+        event_date: date,
+        event_time: time,
+        event_location: location,
+        event_category: category,
+        creator_id:  creator_id,  // This must be solved 
+        event_status: true // default value
+    };
+
     try {
-        const newEvent = await eventModel.createEvent(req.body);
+        const newEvent = await eventModel.createEvent(eventData);
         res.status(201).json(newEvent);
+        console.log("Event created successfully:", newEvent);
     } catch (error) {
         res.status(500).json({ error: "Error creating event" });
+        console.error("Error creating event:", error);
     }
 }
 export async function updateEvent(req, res) {
     // Validate the request body
     const { id } = req.params;
-    const { title, description, date, time, location, category } = req.body;
-    if (!title || !description || !date || !time || !location || !category) {
+    const { title, description, date, time, location, category, creator_id } = req.body;
+    if (!title || !description || !date || !time || !location || !category || !creator_id) {
         return res.status(400).json({ error: "All fields are required" });
     }
+    const eventData = {
+        event_title: title,
+        event_description: description,
+        event_date: date,
+        event_time: time,
+        event_location: location,
+        event_category: category,
+        creator_id:  creator_id,  // This must be solved 
+        event_status: true // default value
+    };
     try {
-        const updatedEvent = await eventModel.updateEvent(id, req.body);
+        const updatedEvent = await eventModel.updateEvent(id, eventData);
         if (updatedEvent.affectedRows === 0) {
             return res.status(404).json({ error: "Event not found" });
         }
         res.status(200).json(updatedEvent);
+        console.log("Event updated successfully:", updatedEvent);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: "Error updating event" });
     }
 }

@@ -5,7 +5,9 @@ import 'admin/navigation.dart';
 import 'user/navigation.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(create: (_) => AuthBloc(AuthRepository()), child: MyApp()),
+  );
 }
 
 class MyApp extends StatefulWidget {

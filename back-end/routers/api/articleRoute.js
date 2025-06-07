@@ -23,7 +23,7 @@ router.route('/')
 
 router.route('/:id')
     .get(authenticate, getArticleById)
-    .put(authenticate, authorizeRoles('admin'), upload.single('img'), updateArticle)
+    // .put(authenticate, authorizeRoles('admin'), upload.single('img'), updateArticle)
     .patch(authenticate, authorizeRoles('admin'), upload.single('img'), updateArticle)
     .delete(authenticate, authorizeRoles('admin'), deleteArticle);
 
