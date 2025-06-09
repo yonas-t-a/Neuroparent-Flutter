@@ -1,29 +1,10 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/auth_repository.dart';
 import '../models/user.dart';
-import 'package:equatable/equatable.dart';
-
-// Events
-abstract class AuthEvent {}
-
-class LoginRequested extends AuthEvent {
-  final String email;
-  final String password;
-  LoginRequested(this.email, this.password);
-}
-
-class RegisterRequested extends AuthEvent {
-  final String name;
-  final String email;
-  final String password;
-  final String role;
-  RegisterRequested(this.name, this.email, this.password, this.role);
-}
 
 // States
-abstract class AuthState extends Equatable {
-  @override
-  List<Object?> get props => [];
+abstract class AuthState {
+  const AuthState();
 }
 
 class AuthInitial extends AuthState {}
@@ -34,66 +15,52 @@ class AuthSuccess extends AuthState {
   final User user;
   final String? token;
   AuthSuccess(this.user, {this.token});
-
-  @override
-  List<Object?> get props => [user, token];
 }
 
 class AuthFailure extends AuthState {
   final String error;
   AuthFailure(this.error);
-
-  @override
-  List<Object?> get props => [error];
 }
 
-class AuthBloc extends Bloc<AuthEvent, AuthState> {
+class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository authRepository;
+  AuthNotifier(this.authRepository) : super(AuthInitial());
 
-  AuthBloc(this.authRepository) : super(AuthInitial()) {
-    on<LoginRequested>(_handleLogin);
-    on<RegisterRequested>(_handleRegister);
-  }
-
-  Future<void> _handleLogin(
-    LoginRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(AuthLoading());
+  Future<void> login(String email, String password) async {
+    state = AuthLoading();
     try {
-      final result = await authRepository.login(event.email, event.password);
-      emit(AuthSuccess(result['user'], token: result['token']));
+      final result = await authRepository.login(email, password);
+      state = AuthSuccess(result['user'], token: result['token']);
     } catch (e) {
-      // Improved error handling
       final errorMessage =
           e is AuthException ? e.message : 'Login failed. Please try again.';
-      emit(AuthFailure(errorMessage));
+      state = AuthFailure(errorMessage);
     }
   }
 
-  Future<void> _handleRegister(
-    RegisterRequested event,
-    Emitter<AuthState> emit,
+  Future<void> register(
+    String name,
+    String email,
+    String password,
+    String role,
   ) async {
-    emit(AuthLoading());
+    state = AuthLoading();
     try {
-      final user = await authRepository.register(
-        event.name,
-        event.email,
-        event.password,
-        event.role,
-      );
-      emit(AuthSuccess(user));
+      final user = await authRepository.register(name, email, password, role);
+      state = AuthSuccess(user);
     } catch (e) {
-      // Improved error handling
       final errorMessage =
           e is AuthException
               ? e.message
               : 'Registration failed. Please try again.';
-      emit(AuthFailure(errorMessage));
+      state = AuthFailure(errorMessage);
     }
   }
 }
+
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  return AuthNotifier(AuthRepository());
+});
 
 // Add this custom exception class
 class AuthException implements Exception {
