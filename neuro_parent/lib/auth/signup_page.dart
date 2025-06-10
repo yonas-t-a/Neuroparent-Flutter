@@ -26,6 +26,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(state.error)));
+      } else if (state is AuthRegistrationSuccess) {
+        context.go('/login');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration successful! Please log in.'),
+          ),
+        );
       } else if (state is AuthSuccess) {
         context.go('/login');
       }

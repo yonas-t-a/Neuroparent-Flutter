@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/auth_repository.dart';
 import '../models/user.dart';
+import '../services/exceptions/auth_exceptions.dart' as service_exceptions;
 
 // States
 abstract class AuthState {
@@ -10,6 +11,10 @@ abstract class AuthState {
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
+
+class AuthRegistrationSuccess extends AuthState {
+  const AuthRegistrationSuccess();
+}
 
 class AuthSuccess extends AuthState {
   final User user;
@@ -33,7 +38,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = AuthSuccess(result['user'], token: result['token']);
     } catch (e) {
       final errorMessage =
-          e is AuthException ? e.message : 'Login failed. Please try again.';
+          e is service_exceptions.AuthException
+              ? e.message
+              : 'Login failed. Please try again.';
       state = AuthFailure(errorMessage);
     }
   }
@@ -46,11 +53,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
   ) async {
     state = AuthLoading();
     try {
-      final user = await authRepository.register(name, email, password, role);
-      state = AuthSuccess(user);
+      await authRepository.register(name, email, password, role);
+      state = const AuthRegistrationSuccess();
     } catch (e) {
       final errorMessage =
-          e is AuthException
+          e is service_exceptions.AuthException
               ? e.message
               : 'Registration failed. Please try again.';
       state = AuthFailure(errorMessage);
@@ -61,16 +68,3 @@ class AuthNotifier extends StateNotifier<AuthState> {
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(AuthRepository());
 });
-
-// Add this custom exception class
-class AuthException implements Exception {
-  final String message;
-  AuthException(this.message);
-
-  @override
-  String toString() => message;
-}
-
-class InvalidCredentialsException extends AuthException {
-  InvalidCredentialsException() : super('Invalid email or password');
-}
