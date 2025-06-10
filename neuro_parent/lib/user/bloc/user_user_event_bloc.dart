@@ -113,3 +113,22 @@ class UserUserEventNotifier extends StateNotifier<UserUserEventState> {
 }
 
 
+final userUserEventProvider =
+    StateNotifierProvider<UserUserEventNotifier, UserUserEventState>((ref) {
+      final authState = ref.watch(authProvider);
+      int? userId;
+      String? token;
+
+      if (authState is AuthSuccess) {
+        userId = authState.user.userId;
+        token = authState.token;
+      }
+
+      final userEventRepository = UserEventRepository(
+        userEventService: UserEventService(jwtToken: token),
+      );
+      return UserUserEventNotifier(
+        userEventRepository: userEventRepository,
+        userId: userId,
+      );
+    });
