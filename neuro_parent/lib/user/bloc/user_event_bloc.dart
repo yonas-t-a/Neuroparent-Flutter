@@ -61,4 +61,8 @@ class UserEventNotifier extends StateNotifier<UserEventState> {
   }
 }
 
-
+final userEventProvider =
+    StateNotifierProvider<UserEventNotifier, UserEventState>((ref) {
+      final repository = EventRepository(eventService: EventService());
+      return UserEventNotifier(repository);
+    });
