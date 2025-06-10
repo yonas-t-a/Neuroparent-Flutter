@@ -2,7 +2,7 @@
 class AuthException implements Exception {
   final String message;
   AuthException(this.message);
-  
+
   @override
   String toString() => message;
 }
@@ -16,5 +16,6 @@ class EmailAlreadyInUseException extends AuthException {
 }
 
 class NetworkAuthException extends AuthException {
-  NetworkAuthException(String message) : super('Network error: $message');
+  NetworkAuthException(String? message)
+    : super('Network error: ${message ?? 'Unknown network error'}');
 }
