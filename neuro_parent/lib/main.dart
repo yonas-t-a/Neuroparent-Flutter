@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'auth/login_page.dart'; // This import is no longer needed
-// import 'user/navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/app_router.dart';
 import 'auth/auth_bloc.dart';
@@ -27,7 +25,6 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Reset auth state on app start/hot restart
     Future.microtask(
       () => ref.read(authProvider.notifier).state = AuthInitial(),
     );
@@ -36,7 +33,6 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final appRouter = ref.watch(appRouterProvider);
-    // Use router for both admin and user
     return MaterialApp.router(
       title: 'NeuroParent',
       debugShowCheckedModeBanner: false,
