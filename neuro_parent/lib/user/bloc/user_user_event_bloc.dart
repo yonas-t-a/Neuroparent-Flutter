@@ -30,6 +30,86 @@ class UserUserEventState {
 }
 
 
+class UserUserEventNotifier extends StateNotifier<UserUserEventState> {
+  final UserEventRepository userEventRepository;
+  final int? userId;
 
+  UserUserEventNotifier({required this.userEventRepository, this.userId})
+    : super(UserUserEventState());
+
+  Future<void> fetchRegisteredEvents() async {
+    if (userId == null) {
+      state = state.copyWith(error: 'User ID not available.');
+      return;
+    }
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final userEvents = await userEventRepository.fetchUserEventsByUserId(
+        userId!,
+      );
+      final registeredIds =
+          userEvents.map((ue) => ue.eventId).whereType<int>().toSet();
+      state = state.copyWith(
+        registeredEventIds: registeredIds,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  Future<void> registerEvent(int eventId) async {
+    if (userId == null) {
+      state = state.copyWith(error: 'User ID not available for registration.');
+      return;
+    }
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final newUserEvent = await userEventRepository.createUserEvent(
+        userId!,
+        eventId,
+      );
+      state = state.copyWith(
+        registeredEventIds: Set.from(state.registeredEventIds)..add(eventId),
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  Future<void> unregisterEvent(int eventId) async {
+    if (userId == null) {
+      state = state.copyWith(
+        error: 'User ID not available for unregistration.',
+      );
+      return;
+    }
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final allUserEvents = await userEventRepository.fetchUserEventsByUserId(
+        userId!,
+      ); 
+      final userEventToDelete = allUserEvents.firstWhere(
+        (ue) => ue.userId == userId && ue.eventId == eventId,
+        orElse:
+            () => throw Exception('User event not found for unregistration'),
+      );
+
+      if (userEventToDelete.userEventId == null) {
+        throw Exception('User event ID is null for unregistration');
+      }
+      await userEventRepository.deleteUserEvent(
+        userEventToDelete.userEventId!,
+      ); 
+      state = state.copyWith(
+        registeredEventIds: Set.from(state.registeredEventIds)..remove(eventId),
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+}
 
 
