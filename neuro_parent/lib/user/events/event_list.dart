@@ -35,12 +35,10 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
   String _selectedCategory = 'ALL';
   String _selectedRegistrationFilter = 'ALL';
 
-  // Helper to parse event date safely
   bool _isAfterSelectedDate(String eventDate) {
     if (_selectedDate == null) return true;
     try {
       final eventDt = DateTime.parse(eventDate);
-      // Show events on or after the selected date
       return !eventDt.isBefore(_selectedDate!);
     } catch (e) {
       return true;
@@ -74,18 +72,18 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               event.eventCategory == _selectedCategory;
           final matchesDate = _isAfterSelectedDate(event.eventDate);
 
-          // New registration filter logic
+
           final bool
           eventIsRegistered = userUserEventState.registeredEventIds.contains(
             event.eventId,
-          ); // event.eventId is guaranteed non-null here by previous model changes
+          ); 
           final bool matchesRegistrationFilter;
           if (_selectedRegistrationFilter == 'REGISTERED') {
             matchesRegistrationFilter = eventIsRegistered;
           } else if (_selectedRegistrationFilter == 'UNREGISTERED') {
             matchesRegistrationFilter = !eventIsRegistered;
           } else {
-            matchesRegistrationFilter = true; // 'ALL' or no filter
+            matchesRegistrationFilter = true; 
           }
 
           return matchesSearch &&
@@ -233,14 +231,14 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                         ),
                                       ),
                                     );
-                                    return; // Stop execution if eventId is null
+                                    return; 
                                   }
 
                                   final userEventNotifier = ref.read(
                                     userUserEventProvider.notifier,
                                   );
                                   if (isRegistered) {
-                                    // Unregister event
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -260,7 +258,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                           content: Text(
                                             'Unregistered from ${event.eventTitle} successfully!',
                                           ),
-                                        ), // Corrected message
+                                        ), 
                                       );
                                     } else {
                                       ScaffoldMessenger.of(
@@ -274,7 +272,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                       );
                                     }
                                   } else {
-                                    // Register event
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -294,7 +292,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                           content: Text(
                                             'Registered for ${event.eventTitle} successfully!',
                                           ),
-                                        ), // Corrected message
+                                        ), 
                                       );
                                     } else {
                                       ScaffoldMessenger.of(
@@ -320,7 +318,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                         ),
                                       ),
                                     );
-                                    return; // Stop navigation if eventId is null
+                                    return;
                                   }
                                   context.go(
                                     '/events/${eventIdForNavigation}',
@@ -348,10 +346,8 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
       onSelected: (bool selected) {
         setState(() {
           if (label.toUpperCase() == 'ALL') {
-            // Always select ALL, never deselect
             _selectedCategory = 'ALL';
           } else {
-            // If another chip is selected, set it; if deselected, revert to ALL
             if (selected) {
               _selectedCategory = label;
             } else {
@@ -374,9 +370,9 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
       onTap: () {
         setState(() {
           if (_selectedRegistrationFilter == filter) {
-            _selectedRegistrationFilter = 'ALL'; // Deselect if already selected
+            _selectedRegistrationFilter = 'ALL'; 
           } else {
-            _selectedRegistrationFilter = filter; // Select new filter
+            _selectedRegistrationFilter = filter; 
           }
         });
       },
@@ -386,7 +382,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
           color:
               isSelected
                   ? const Color(0xFF1976D2)
-                  : const Color(0xFFEAF1FC), // Apply selected color
+                  : const Color(0xFFEAF1FC), 
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -418,15 +414,15 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Parse and format the date
+
     String month = '';
     String day = '';
     try {
       final dt = DateTime.parse(event.eventDate);
-      month = DateFormat('MMM').format(dt); // e.g. 'Jun'
-      day = DateFormat('d').format(dt); // e.g. '6'
+      month = DateFormat('MMM').format(dt); 
+      day = DateFormat('d').format(dt); 
     } catch (e) {
-      // fallback if parsing fails
+
       month = '';
       day = '';
     }
@@ -498,7 +494,6 @@ class EventCard extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          // color: const Color(0xFFBEEBF2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: ElevatedButton(
