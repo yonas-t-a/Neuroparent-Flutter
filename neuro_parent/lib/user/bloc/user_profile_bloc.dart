@@ -73,3 +73,24 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
     }
   }
 }
+
+final userProfileProvider =
+    StateNotifierProvider<UserProfileNotifier, UserProfileState>((ref) {
+      final authState = ref.watch(authProvider);
+      int? userId;
+      String? token;
+
+      if (authState is AuthSuccess) {
+        userId = authState.user.userId;
+        token = authState.token;
+      }
+
+      final userRepository = UserRepository(
+        userService: UserService(jwtToken: token),
+      );
+      return UserProfileNotifier(
+        userRepository: userRepository,
+        userId: userId,
+        jwtToken: token,
+      );
+    });
