@@ -24,5 +24,41 @@ class UserEventState {
   }
 }
 
+class UserEventNotifier extends StateNotifier<UserEventState> {
+  final EventRepository repository;
+  UserEventNotifier(this.repository) : super(UserEventState());
+
+  Future<void> fetchEvents() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final events = await repository.getEvents();
+      state = state.copyWith(events: events, isLoading: false, error: null);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  Future<void> fetchEventById(int eventId) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final event = await repository.getEventById(eventId);
+      // Update the list of events, add/replace the fetched event
+      final updatedEvents = List<Event>.from(state.events);
+      final index = updatedEvents.indexWhere((e) => e.eventId == eventId);
+      if (index != -1) {
+        updatedEvents[index] = event; // Update existing event
+      } else {
+        updatedEvents.add(event); // Add new event if not present
+      }
+      state = state.copyWith(
+        events: updatedEvents,
+        isLoading: false,
+        error: null,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+}
 
 
