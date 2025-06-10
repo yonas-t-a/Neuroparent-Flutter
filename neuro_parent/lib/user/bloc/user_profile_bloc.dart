@@ -20,3 +20,56 @@ class UserProfileState {
     );
   }
 }
+
+class UserProfileNotifier extends StateNotifier<UserProfileState> {
+  final UserRepository userRepository;
+  final int? userId;
+  final String? jwtToken;
+
+  UserProfileNotifier({
+    required this.userRepository,
+    this.userId,
+    this.jwtToken,
+  }) : super(UserProfileState());
+
+  Future<void> fetchUser() async {
+    if (userId == null || jwtToken == null) {
+      state = state.copyWith(error: 'User ID or JWT token not available.');
+      return;
+    }
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final fetchedUser = await userRepository.getUserById(userId!);
+      state = state.copyWith(user: fetchedUser, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  Future<void> updateUser({
+    String? name,
+    String? email,
+    String? password,
+    String? oldPassword,
+    String? newPassword,
+  }) async {
+    if (userId == null || jwtToken == null) {
+      state = state.copyWith(error: 'User ID or JWT token not available.');
+      return;
+    }
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final updatedUser = await userRepository.updateUser(
+        userId!,
+        name: name,
+        email: email,
+        password: password,
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      );
+      state = state.copyWith(user: updatedUser, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+}
