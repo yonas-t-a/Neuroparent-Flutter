@@ -3,7 +3,7 @@ import '../../models/event.dart';
 import '../../repositories/event_repository.dart';
 import '../../services/event_service.dart';
 
-// State class for user events
+
 class UserEventState {
   final List<Event> events;
   final bool isLoading;
