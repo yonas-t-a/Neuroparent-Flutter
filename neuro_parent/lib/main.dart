@@ -1,47 +1,46 @@
 import 'package:flutter/material.dart';
-import 'auth/login_page.dart';
-import 'auth/signup_page.dart';
-import 'admin/navigation.dart';
-import 'user/navigation.dart';
+// import 'auth/login_page.dart'; // This import is no longer needed
+// import 'user/navigation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/app_router.dart';
+import 'auth/auth_bloc.dart';
 
 void main() {
-  runApp(
-    BlocProvider(create: (_) => AuthBloc(AuthRepository()), child: MyApp()),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  String? _role; // 'admin' or 'user'
+class _MyAppState extends ConsumerState<MyApp> {
+  // String? _role; // 'admin' or 'user' - No longer needed
 
-  void _onLogin(String role) {
-    setState(() {
-      _role = role;
-    });
+  // void _onLogin(String role) { // No longer needed
+  //   setState(() {
+  //     _role = role;
+  //   });
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset auth state on app start/hot restart
+    Future.microtask(
+      () => ref.read(authProvider.notifier).state = AuthInitial(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget child;
-    if (_role == 'admin') {
-      child = const AdminNavigation();
-    } else if (_role == 'user') {
-      child = const UserNavigation();
-    } else {
-      child = LoginPage(onLogin: _onLogin);
-    }
-    return MaterialApp(
+    final appRouter = ref.watch(appRouterProvider);
+    // Use router for both admin and user
+    return MaterialApp.router(
       title: 'NeuroParent',
       debugShowCheckedModeBanner: false,
-      home: child,
-      routes: {
-       
-      },
+      routerConfig: appRouter,
     );
   }
 }
