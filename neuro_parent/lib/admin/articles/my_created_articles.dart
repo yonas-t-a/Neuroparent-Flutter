@@ -6,15 +6,15 @@ import '../../admin/bloc/article_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:mime_type/mime_type.dart';
-import '../../models/article.dart'; // Import Article model
+import '../../models/article.dart'; 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:go_router/go_router.dart'; // Import for network image
+import 'package:go_router/go_router.dart'; 
 import 'package:neuro_parent/user/widgets/user_bottom_nav.dart';
 import 'package:collection/collection.dart';
 
 class MyCreatedArticlesPage extends ConsumerStatefulWidget {
   final String jwtToken;
-  final int articleId; // Changed from Article article
+  final int articleId; 
 
   const MyCreatedArticlesPage({
     super.key,
@@ -33,21 +33,15 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
   late final TextEditingController _contentController;
   String? _selectedCategory;
   File?
-  _selectedImage; // Keep File for potential mobile preview if needed, but not for upload
+  _selectedImage; 
   bool _submitted = false;
   Uint8List? _selectedImageBytes;
   String? _selectedImageFilename;
-  bool _isImageNew = false; // Flag to check if a new image is selected
+  bool _isImageNew = false; 
 
   @override
   void initState() {
     super.initState();
-    // Fetch the article based on articleId from the provider if needed
-    // For now, let's assume the article is available in the bloc state or refetch it.
-    // We'll watch the articlesFutureProvider in build to get the article.
-
-    // Initialize controllers with dummy values or fetched article data
-    // This part will need adjustment once we fetch the article inside build.
     _titleController = TextEditingController();
     _contentController = TextEditingController();
   }
@@ -66,7 +60,7 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
-        _selectedImage = File(pickedFile.path); // Optional: for preview
+        _selectedImage = File(pickedFile.path); 
         _selectedImageBytes = bytes;
         _selectedImageFilename = pickedFile.name;
         _isImageNew = true;
@@ -96,15 +90,14 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
       title: _titleController.text.trim(),
       content: _contentController.text.trim(),
       category: _selectedCategory!,
-      imageBytes: _selectedImageBytes, // Pass nullable bytes
-      filename: _selectedImageFilename, // Pass nullable filename
-      contentType: contentType, // Pass nullable contentType
+      imageBytes: _selectedImageBytes,
+      filename: _selectedImageFilename, 
+      contentType: contentType, 
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch the state of the edit operation for feedback
     final state = ref.watch(editArticleProvider(widget.jwtToken));
     final articlesAsyncValue = ref.watch(
       articlesFutureProvider(widget.jwtToken),
@@ -121,7 +114,6 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
             body: Center(child: Text('Article not found.')),
           );
         }
-        // Initialize controllers and selectedCategory here after article is fetched
         if (_titleController.text.isEmpty && _contentController.text.isEmpty) {
           _titleController.text = article.articleTitle;
           _contentController.text = article.articleContent;
@@ -141,7 +133,7 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
               ),
             );
             ref.invalidate(articlesFutureProvider(widget.jwtToken));
-            context.pop(); // Navigate back after successful edit
+            context.pop(); 
           } else if (next is EditArticleError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -198,27 +190,26 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text('Image'), // Changed from Add image
+                    const Text('Image'), 
                     const SizedBox(height: 4),
                     GestureDetector(
                       onTap: _pickImage,
                       child: Row(
                         children: [
-                          // Display current image or selected new image
                           _selectedImageBytes != null
                               ? CircleAvatar(
                                 radius: 25,
                                 backgroundImage: MemoryImage(
                                   _selectedImageBytes!,
                                 ),
-                              ) // Display new image
+                              ) 
                               : (article.articleImage.isNotEmpty
                                   ? CircleAvatar(
                                     radius: 25,
                                     backgroundImage: CachedNetworkImageProvider(
                                       article.articleImage,
                                     ),
-                                  ) // Display existing image
+                                  ) 
                                   : CircleAvatar(
                                     radius: 25,
                                     backgroundColor: Colors.grey.shade200,
@@ -261,7 +252,7 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
                           if (!_isImageNew &&
                               article
                                   .articleImage
-                                  .isNotEmpty) // Option to remove existing image
+                                  .isNotEmpty) 
                             IconButton(
                               icon: Icon(
                                 Icons.remove_circle,
@@ -393,7 +384,6 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
   }
 }
 
-// Reusing the input decoration helper function
 InputDecoration _inputDecoration(String label) {
   return InputDecoration(
     labelText: label,

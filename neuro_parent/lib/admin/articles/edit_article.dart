@@ -16,7 +16,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
   final TextEditingController _searchController = TextEditingController();
 
   final List<String> categories = [
-    'All', // Add 'All' option for category filter
+    'All',
     'ASD',
     'ADHD',
     'Dyslexia',
@@ -70,7 +70,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Watch the state of the delete operation for feedback
+
     ref.listen<DeleteArticleState>(deleteArticleProvider(widget.jwtToken), (
       previous,
       next,
@@ -81,7 +81,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
             content: Text('Article ${next.articleId} deleted successfully!'),
           ),
         );
-        // Invalidate the articles provider to refresh the list
+
         ref.invalidate(articlesFutureProvider(widget.jwtToken));
       } else if (next is DeleteArticleError) {
         _handleDeleteError(
@@ -113,7 +113,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            // Search bar
+
             Container(
               decoration: BoxDecoration(
                 color: Colors.blue.shade50,
@@ -134,7 +134,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
             ),
             const SizedBox(height: 10),
 
-            // Category Chips
+
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -161,8 +161,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
                                           .state =
                                       category == 'All' ? null : category;
                                 } else if (selectedCategory == category) {
-                                  // This case handles deselecting the current chip,
-                                  // effectively setting the filter back to 'All'.
+
                                   ref
                                       .read(
                                         articleSelectedCategoryProvider
@@ -194,7 +193,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
                     itemCount: articles.length,
                     itemBuilder: (context, index) {
                       final article = articles[index];
-                      // Check if articleId is not null before displaying delete button
+
                       if (article.articleId == null) return SizedBox.shrink();
 
                       return Card(
@@ -207,11 +206,11 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Row(image, column(title, subtitle))
+
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Assuming article_image is a URL
+
                                   article.articleImage.isNotEmpty
                                       ? CircleAvatar(
                                         radius: 20,
@@ -244,7 +243,7 @@ class _EditArticlePageState extends ConsumerState<EditArticlePage> {
                                         const SizedBox(height: 4),
                                         Text(
                                           article.articleCategory,
-                                        ), // Display category as subtitle
+                                        ), 
                                       ],
                                     ),
                                   ),
