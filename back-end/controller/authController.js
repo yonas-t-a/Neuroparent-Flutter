@@ -7,6 +7,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret';
 export async function login(req, res) {
     const { email, password } = req.body;
 
+    // Log the request body for debugging
+    console.log('Login Request Body:', req.body);
+
     if (!email || !password)
         return res.status(400).json({ error: "Email and password are required" });
 
@@ -35,12 +38,17 @@ export async function login(req, res) {
             }   
          });
     } catch (error) {
+        // Log the internal server error
+        console.error('Login Error:', error);
         res.status(500).json({ error: "Login failed" });
     }
 }
 
 export async function register(req, res) {
     const { name, email, password, role } = req.body;
+
+    // Log the request body for debugging
+    console.log('Register Request Body:', req.body);
 
     if (!name || !email || !password)
         return res.status(400).json({ error: "All fields are required" });
@@ -61,6 +69,8 @@ export async function register(req, res) {
             }   
          });
     } catch (error) {
+        // Log the internal server error
+        console.error('Register Error:', error);
         res.status(500).json({ error: "Registration failed" });
     }
 }
