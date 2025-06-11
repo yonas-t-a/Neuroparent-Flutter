@@ -283,3 +283,13 @@ InputDecoration _inputDecoration(String label) {
     ),
   );
 }
+int _getCurrentIndex(BuildContext context) {
+  final location = GoRouterState.of(context).uri.toString();
+  if (location.startsWith('/home')) return 0;
+  if (location.startsWith('/events')) return 1;
+  if (location.startsWith('/registered')) return 2;
+  if (location.startsWith('/articles')) return 3;
+  if (location.startsWith('/profile')) return 4;
+  if (location.startsWith('/admin/add')) return 5;
+  return 0;
+}
