@@ -15,5 +15,40 @@ class UserBottomNav extends ConsumerWidget {
     '/profile',
   ];
 
- 
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final isAdmin = authState is AuthSuccess && authState.user.role == 'admin';
+
+    // Build items list
+    final items = <BottomNavigationBarItem>[
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(Icons.home),
+        label: '',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.event_outlined),
+        activeIcon: Icon(Icons.event),
+        label: '',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.app_registration),
+        activeIcon: Icon(Icons.app_registration),
+        label: '',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.article_outlined),
+        activeIcon: Icon(Icons.article),
+        label: '',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person_outline),
+        activeIcon: Icon(Icons.person),
+        label: '',
+      ),
+    ];
+
+    // Add the "Add" button at the end if admin
+
 }
