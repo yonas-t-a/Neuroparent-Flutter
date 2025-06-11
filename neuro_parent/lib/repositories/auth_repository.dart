@@ -3,7 +3,10 @@ import '../models/user.dart';
 import '../services/exceptions/auth_exceptions.dart';
 
 class AuthRepository {
-  final AuthService _authService = AuthService();
+  final AuthService _authService;
+
+  AuthRepository({AuthService? authService})
+    : _authService = authService ?? AuthService();
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -15,7 +18,12 @@ class AuthRepository {
     }
   }
 
-  Future<User> register(String name, String email, String password, String role) async {
+  Future<User> register(
+    String name,
+    String email,
+    String password,
+    String role,
+  ) async {
     try {
       return await _authService.register(name, email, password, role);
     } on AuthException {
@@ -25,3 +33,4 @@ class AuthRepository {
     }
   }
 }
+
