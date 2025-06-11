@@ -38,3 +38,12 @@ class ArticleNotifier extends StateNotifier<ArticleState> {
     }
   }
 }
+final userArticleProvider =
+    StateNotifierProvider<ArticleNotifier, ArticleState>((ref) {
+      final authState = ref.watch(authProvider);
+      final token = authState is AuthSuccess ? authState.token : null;
+      final repository = ArticleRepository(
+        articleService: ArticleService(jwtToken: token),
+      );
+      return ArticleNotifier(repository);
+    });
