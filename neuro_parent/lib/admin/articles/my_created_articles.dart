@@ -75,12 +75,6 @@ class _MyCreatedArticlesPageState extends ConsumerState<MyCreatedArticlesPage> {
     String? contentType;
     if (_isImageNew) {
       contentType = mime(_selectedImageFilename!);
-      if (contentType == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not determine image type.')),
-        );
-        return;
-      }
     }
 
     final notifier = ref.read(editArticleProvider(widget.jwtToken).notifier);

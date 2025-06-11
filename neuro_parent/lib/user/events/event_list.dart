@@ -146,12 +146,10 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2050),
                                 );
-                                if (selectedDate != null) {
-                                  setState(() {
-                                    _selectedDate = selectedDate;
-                                  });
-                                }
-                              },
+                                setState(() {
+                                  _selectedDate = selectedDate;
+                                });
+                                                            },
                               child: const Icon(Icons.calendar_today_outlined),
                             );
                           },
