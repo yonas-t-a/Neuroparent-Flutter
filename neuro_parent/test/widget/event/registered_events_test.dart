@@ -1,28 +1,30 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:neuro_parent/admin/events/edit_my_events.dart';
+import 'package:neuro_parent/user/events/registered_events.dart';
 
 void main() {
-  group('EditMyEventPage Widget Tests', () {
-    testWidgets('renders EditMyEventPage correctly', (
+  group('RegisteredEventsScreen Widget Tests', () {
+    testWidgets('renders RegisteredEventsScreen correctly', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
             home: Scaffold(
-              appBar: AppBar(title: const Text('Edit Event')),
-              body: const Center(child: Text('Edit Event')),
+              appBar: AppBar(title: const Text('Registered Events')),
+              body: const Center(child: Text('No registered events found.')),
             ),
           ),
         ),
       );
+
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.text('Edit Event'), findsWidgets);
+      expect(find.text('Registered Events'), findsOneWidget);
+      expect(find.text('No registered events found.'), findsOneWidget);
     });
 
-    testWidgets('displays loading indicator while fetching event data', (
+    testWidgets('displays loading indicator while fetching registered events', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -32,6 +34,7 @@ void main() {
           ),
         ),
       );
+
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
   });
