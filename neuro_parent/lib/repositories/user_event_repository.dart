@@ -15,5 +15,13 @@ class UserEventRepository {
     }
   }
 
+  Future<void> deleteUserEvent(int userEventId) async {
+    try {
+      await userEventService.deleteUserEvent(userEventId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   
 }
