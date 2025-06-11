@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/event.dart';
 import '../../repositories/event_repository.dart';
 import '../../services/event_service.dart';
 import '../../auth/auth_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:neuro_parent/user/widgets/user_bottom_nav.dart';
 
-class CreateEventPage extends StatefulWidget {
+class CreateEventPage extends ConsumerStatefulWidget {
+  const CreateEventPage({super.key});
+
   @override
-  _CreateEventPageState createState() => _CreateEventPageState();
+  ConsumerState<CreateEventPage> createState() => _CreateEventPageState();
 }
 
-class _CreateEventPageState extends State<CreateEventPage> {
+class _CreateEventPageState extends ConsumerState<CreateEventPage> {
   final _formKey = GlobalKey<FormState>();
   String? selectedCategory;
 
@@ -24,6 +28,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _descriptionController = TextEditingController();
 
   bool _isLoading = false;
+  bool _eventCreated = false;
 
   @override
   void dispose() {
@@ -69,17 +74,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
     required String token,
     required int creatorId,
   }) async {
-    // Add these debug prints before validation
-    print('Title: ${_titleController.text}');
-    print('Location: ${_locationController.text}');
-    print('Date: ${_dateController.text}');
-    print('Time: ${_timeController.text}');
-    print('Category: $selectedCategory');
-    print('Description: ${_descriptionController.text}');
-    print('Creator ID: $creatorId');
-    // (!title || !description || !date || !time || !location || !category)
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() => _isLoading = true);
+      setState(() {
+        _isLoading = true;
+        _eventCreated = false;
+      });
       final event = Event(
         eventTitle: _titleController.text.trim(),
         eventDescription: _descriptionController.text.trim(),
@@ -87,7 +86,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         eventTime: _timeController.text,
         eventLocation: _locationController.text.trim(),
         eventCategory: selectedCategory ?? '',
-        creatorId: creatorId, 
+        creatorId: creatorId,
       );
       final eventRepository = EventRepository(
         eventService: EventService(jwtToken: token),
@@ -95,10 +94,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
       try {
         await eventRepository.createEvent(event);
         if (mounted) {
+          setState(() {
+            _eventCreated = true;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Event created successfully!')),
+            const SnackBar(
+              content: Text('Event created successfully!'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
           );
-          Navigator.of(context).pop();
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -110,7 +115,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     if (authState is AuthLoading) {
@@ -319,3 +324,5 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 }
+
+
