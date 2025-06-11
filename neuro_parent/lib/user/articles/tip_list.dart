@@ -5,3 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../bloc/user_article_bloc.dart';
 import 'package:neuro_parent/core/categories.dart';
 
+class TipsScreen extends ConsumerStatefulWidget {
+  const TipsScreen({super.key});
+
+  @override
+  ConsumerState<TipsScreen> createState() => _TipsScreenState();
+}
