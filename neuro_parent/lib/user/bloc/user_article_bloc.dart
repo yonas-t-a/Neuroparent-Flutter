@@ -23,3 +23,18 @@ class ArticleState {
     );
   }
 }
+
+class ArticleNotifier extends StateNotifier<ArticleState> {
+  final ArticleRepository repository;
+  ArticleNotifier(this.repository) : super(ArticleState());
+
+  Future<void> fetchArticles() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final articles = await repository.getArticles();
+      state = state.copyWith(articles: articles, isLoading: false, error: null);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+}
