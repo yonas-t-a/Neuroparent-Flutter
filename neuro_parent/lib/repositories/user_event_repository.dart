@@ -23,5 +23,17 @@ class UserEventRepository {
     }
   }
 
+  Future<List<UserEvent>> fetchUserEventsByUserId(int userId) async {
+    try {
+      final allUserEvents = await userEventService.fetchUserEventsByUserId(
+        userId,
+      );
+      return allUserEvents.where((ue) => ue.userId == userId).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
   
 }
