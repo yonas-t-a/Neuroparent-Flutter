@@ -34,3 +34,26 @@ class _TipsScreenState extends ConsumerState<TipsScreen> {
     if (location.startsWith('/profile')) return 4;
     return 0;
   }
+  @override
+  Widget build(BuildContext context) {
+    final articleState = ref.watch(userArticleProvider);
+    final articles = articleState.articles;
+    final isLoading = articleState.isLoading;
+    final error = articleState.error;
+
+    // Get unique categories
+    final categories = [
+      ...{for (final a in Categories.allCategories) a},
+    ];
+
+    // Filtered articles
+    final filteredArticles =
+        articles.where((article) {
+          final matchesSearch = article.articleTitle.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
+          final matchesCategory =
+              _selectedCategory == 'ALL' ||
+              article.articleCategory == _selectedCategory;
+          return matchesSearch && matchesCategory;
+        }).toList();
