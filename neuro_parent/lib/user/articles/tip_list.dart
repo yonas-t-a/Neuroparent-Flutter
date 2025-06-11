@@ -221,3 +221,28 @@ class _TipsScreenState extends ConsumerState<TipsScreen> {
       ),
     );
   }
+Widget _buildCategoryChip(String label) {
+    final isSelected = _selectedCategory.toUpperCase() == label.toUpperCase();
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (bool selected) {
+        setState(() {
+          if (label.toUpperCase() == 'ALL') {
+            _selectedCategory = 'ALL';
+          } else {
+            if (selected) {
+              _selectedCategory = label;
+            } else {
+              _selectedCategory = 'ALL';
+            }
+          }
+        });
+      },
+      backgroundColor: Color(0xFFF3F6FC),
+      selectedColor: const Color(0xFF1976D2),
+      labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+  }
+}
