@@ -1,107 +1,159 @@
 import 'package:flutter/material.dart';
-import 'navigation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:neuro_parent/user/widgets/user_bottom_nav.dart';
 
 class AddPage extends StatelessWidget {
-  final void Function(AdminRoute route)? onNavigate;
-  const AddPage({this.onNavigate, super.key});
+  const AddPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final double screenPadding = MediaQuery.of(context).size.width * 0.06;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add/Edit Content'),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '# Add',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenPadding,
+            vertical: 16,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Text(
+                    'Add',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildTipCard(
+                  context,
+                  title: 'Tips and Tricks',
+                  subtitle: 'Add tips and tricks',
+                  icon: Icons.sunny,
+                  onTap: () {
+                    context.go('/admin/create-article');
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildEventItem(
+                  context,
+                  title: 'Event',
+                  subtitle: 'Add Event',
+                  icon: Icons.calendar_month_outlined,
+                  onTap: () {
+                    context.go('/admin/create-event');
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Center(
+                  child: Text(
+                    'Edit',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildTipCard(
+                  context,
+                  title: 'Tips and Tricks',
+                  subtitle: 'Edit my tips and tricks',
+                  icon: Icons.sunny,
+                  onTap: () {
+                    context.go('/admin/edit-article');
+                  },
+                ),
+                _buildEventItem(
+                  context,
+                  title: 'Event',
+                  subtitle: 'Edit my Event',
+                  icon: Icons.calendar_month_outlined,
+                  onTap: () {
+                    context.go('/admin/edit-event');
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            _buildClickableCard(
-              context,
-              title: 'Tips and Tricks',
-              subtitle: 'Add tips and tricks',
-              onTap: () => onNavigate?.call(AdminRoute.createArticle),
-            ),
-            SizedBox(height: 16),
-            _buildClickableCard(
-              context,
-              title: '31 Event',
-              subtitle: 'Add Event',
-              onTap: () => onNavigate?.call(AdminRoute.createEvent),
-            ),
-            SizedBox(height: 32),
-            Text(
-              '# Edit',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16),
-            _buildClickableCard(
-              context,
-              title: 'Tips and Tricks',
-              subtitle: 'Edit my tips and tricks',
-              onTap: () => onNavigate?.call(AdminRoute.editArticle),
-            ),
-            SizedBox(height: 16),
-            _buildClickableCard(
-              context,
-              title: '31 Event',
-              subtitle: 'Edit my Event',
-              onTap: () => onNavigate?.call(AdminRoute.editEvent),
-            ),
-          ],
+          ),
         ),
+      ),
+      bottomNavigationBar: UserBottomNav(
+        currentIndex: _getCurrentIndex(context),
       ),
     );
   }
 
-  Widget _buildClickableCard(
+  Widget _buildTipCard(
     BuildContext context, {
     required String title,
     required String subtitle,
+    required IconData icon,
     required VoidCallback onTap,
   }) {
     return Card(
-      elevation: 4,
+      color: const Color(0xFFF3F6FC),
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12)),
-        child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-        ),
+        borderRadius: BorderRadius.circular(12.0),
+        side: BorderSide(color: Colors.grey[200]!, width: 1.0),
       ),
-      );
+      margin: const EdgeInsets.only(bottom: 16.0),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16.0),
+        leading: Container(
+          width: 48.0,
+          height: 48.0,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8D1D1),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Icon(icon, color: Colors.yellow),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+        ),
+        subtitle: Text(subtitle, style: const TextStyle(color: Colors.black54)),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _buildEventItem(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        side: BorderSide(color: Color(0xFFE3EBF5), width: 1.0),
+      ),
+      margin: const EdgeInsets.only(bottom: 16.0),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16.0),
+        leading: Container(
+          width: 48.0,
+          height: 48.0,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3EBF5),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Icon(icon, color: Colors.blue),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+        ),
+        subtitle: Text(subtitle, style: const TextStyle(color: Colors.black54)),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
+      ),
+    );
   }
 }
