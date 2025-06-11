@@ -9,6 +9,73 @@ import 'package:mime_type/mime_type.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neuro_parent/user/widgets/user_bottom_nav.dart';
 
+class CreateArticlePage extends ConsumerStatefulWidget {
+  final String jwtToken;
+  const CreateArticlePage({super.key, required this.jwtToken});
+
+  @override
+  ConsumerState<CreateArticlePage> createState() => _CreateArticlePageState();
+}
+
+class _CreateArticlePageState extends ConsumerState<CreateArticlePage> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
+  String? _selectedCategory;
+  File?
+  _selectedImage; 
+  bool _submitted = false;
+  Uint8List? _selectedImageBytes;
+  String? _selectedImageFilename;
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _selectedImage = File(pickedFile.path); 
+        _selectedImageBytes = bytes;
+        _selectedImageFilename = pickedFile.name;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  void _submit() async {
+    setState(() => _submitted = true);
+    if (!_formKey.currentState!.validate() ||
+        _selectedImageBytes == null ||
+        _selectedImageFilename == null) {
+      return;
+    }
+
+    final String? contentType = mime(_selectedImageFilename!);
+    if (contentType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not determine image type.')),
+      );
+      return;
+    }
+
+    final notifier = ref.read(createArticleProvider(widget.jwtToken).notifier);
+    await notifier.createArticle(
+      title: _titleController.text.trim(),
+      content: _contentController.text.trim(),
+      category: _selectedCategory!,
+      imageBytes: _selectedImageBytes!,
+      filename: _selectedImageFilename!,
+      contentType: contentType,
+    );
+  }
+
 
 @override
   Widget build(BuildContext context) {
@@ -203,4 +270,16 @@ import 'package:neuro_parent/user/widgets/user_bottom_nav.dart';
       ),
     );
   }
+}
+
+InputDecoration _inputDecoration(String label) {
+  return InputDecoration(
+    labelText: label,
+    filled: true,
+    fillColor: Colors.blue[50],
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+  );
 }
