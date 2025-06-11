@@ -30,7 +30,7 @@ This Mobile app is designed to support neurodivergent parents by providing a **C
 - Admins can curate/remove tips.
 
 #### Delete
-- Users can delete their own tips.
+- Writers can delete their tips.
 - Admins can remove inappropriate/outdated tips.
 
 ---
