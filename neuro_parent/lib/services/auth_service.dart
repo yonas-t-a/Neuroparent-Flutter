@@ -18,12 +18,10 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      print('Sending login request to $baseUrl/api/auth/login');
       final response = await _dio.post(
         '/api/auth/login',
         data: {'email': email, 'password': password},
       );
-      print('Response: ${response.data}');
       return {
         'token': response.data['token'],
         'user': User.fromJson(response.data['user']),
@@ -33,13 +31,8 @@ class AuthService {
       if (e.response != null) {
         errorMessage =
             'HTTP ${e.response?.statusCode}: ${e.response?.data['error'] ?? e.response?.statusMessage ?? 'Unknown API error'}';
-        print(
-          'Dio response error: Status Code: ${e.response?.statusCode}, Data: ${e.response?.data}',
-        );
       } else {
-        print('Dio network error: ${e.error}');
       }
-      print('Dio error: $errorMessage');
 
       if (e.response != null) {
         if (e.response?.statusCode == 401) {
@@ -84,13 +77,8 @@ class AuthService {
       if (e.response != null) {
         errorMessage =
             'HTTP ${e.response?.statusCode}: ${e.response?.data['error'] ?? e.response?.statusMessage ?? 'Unknown API error'}';
-        print(
-          'Dio response error: Status Code: ${e.response?.statusCode}, Data: ${e.response?.data}',
-        );
       } else {
-        print('Dio network error: ${e.error}');
       }
-      print('Dio error: $errorMessage');
 
       if (e.response != null) {
         throw AuthException(e.response?.data['error'] ?? 'Registration failed');

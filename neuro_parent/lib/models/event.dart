@@ -31,9 +31,6 @@ class Event {
       final DateTime dateTime = DateTime.parse(parsedDate);
       parsedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     } catch (e) {
-      print(
-        "Warning: Could not parse event_date '${json['event_date']}'. Using raw string. Error: $e",
-      );
     }
 
     return Event(
