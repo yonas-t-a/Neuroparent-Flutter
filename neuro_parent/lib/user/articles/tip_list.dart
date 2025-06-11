@@ -11,3 +11,4 @@ class TipsScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<TipsScreen> createState() => _TipsScreenState();
 }
+
