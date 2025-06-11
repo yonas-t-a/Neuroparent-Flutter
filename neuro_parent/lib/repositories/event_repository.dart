@@ -8,5 +8,8 @@ class EventRepository {
   Future<List<Event>> getEvents() => eventService.getEvents();
   Future<Event> getEventById(int id) => eventService.getEventById(id);
   Future<void> createEvent(Event event) => eventService.createEvent(event);
-  // Add more methods as needed
+  Future<void> deleteEvent(int eventId) => eventService.deleteEvent(eventId);
+  Future<void> updateEvent(Event event) => eventService.updateEvent(event);
+
 }
+
