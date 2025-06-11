@@ -1,8 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:neuro_parent/main.dart'; // Import your main app widget
-import 'package:neuro_parent/services/exceptions/auth_exceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart'; // Import for SnackBar
+// Import for SnackBar
 
 void main() {
   group('Auth Integration Tests', () {
