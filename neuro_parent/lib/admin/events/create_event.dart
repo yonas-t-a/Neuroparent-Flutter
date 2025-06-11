@@ -110,187 +110,185 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthLoading) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
-        } else if (state is AuthSuccess &&
-            state.token != null &&
-            state.user.userId != null) {
-          final String token = state.token!;
-          final int creatorId = state.user.userId;
-          return Scaffold(
-            backgroundColor: Colors.white,
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
+    final authState = ref.watch(authProvider);
+    if (authState is AuthLoading) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    } else if (authState is AuthSuccess && authState.token != null) {
+      final String token = authState.token!;
+      final int creatorId = authState.user.userId;
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Cancel", style: TextStyle(fontSize: 16)),
-                          Text(
-                            "New Event",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 60),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      _buildTextField(
-                        "Title",
-                        controller: _titleController,
-                        validator:
-                            (v) => v == null || v.isEmpty ? "Required" : null,
-                      ),
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        "Location",
-                        controller: _locationController,
-                        validator:
-                            (v) => v == null || v.isEmpty ? "Required" : null,
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _dateController,
-                              readOnly: true,
-                              decoration: _inputDecoration("Date"),
-                              validator:
-                                  (v) =>
-                                      v == null || v.isEmpty
-                                          ? "Required"
-                                          : null,
-                              onTap: () => _selectDate(context),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.calendar_today,
-                              color: Colors.blue,
-                            ),
-                            onPressed: () => _selectDate(context),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _timeController,
-                              readOnly: true,
-                              decoration: _inputDecoration("Time"),
-                              validator:
-                                  (v) =>
-                                      v == null || v.isEmpty
-                                          ? "Required"
-                                          : null,
-                              onTap: () => _selectTime(context),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.access_time, color: Colors.blue),
-                            onPressed: () => _selectTime(context),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      DropdownButtonFormField<String>(
-                        decoration: _inputDecoration("Category"),
-                        value: selectedCategory,
-                        items:
-                            [
-                                  'ASD',
-                                  'ADHD',
-                                  'Dyslexia',
-                                  'Dyscalculia',
-                                  'Dyspraxia',
-                                  'Tourette Syndrome',
-                                  'OCD',
-                                  'Bipolar',
-                                  'Anxiety',
-                                ]
-                                .map(
-                                  (category) => DropdownMenuItem(
-                                    value: category,
-                                    child: Text(category),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCategory = value;
-                          });
+                      TextButton(
+                        onPressed: () {
+                          context.go('/admin/add');
                         },
-                        validator:
-                            (v) => v == null || v.isEmpty ? "Required" : null,
-                      ),
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        "Description",
-                        controller: _descriptionController,
-                        maxLines: 4,
-                        validator:
-                            (v) => v == null || v.isEmpty ? "Required" : null,
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed:
-                            _isLoading
-                                ? null
-                                : () => _submitForm(
-                                  token: token,
-                                  creatorId: creatorId,
-                                ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlueAccent,
-                          shape: StadiumBorder(),
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.black),
                         ),
-                        child:
-                            _isLoading
-                                ? SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                                : Text(
-                                  "Add Event",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                      ),
+                      Text(
+                        "New Event",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 60),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  _buildTextField(
+                    "Title",
+                    controller: _titleController,
+                    validator:
+                        (v) => v == null || v.isEmpty ? "Required" : null,
+                  ),
+                  SizedBox(height: 10),
+                  _buildTextField(
+                    "Location",
+                    controller: _locationController,
+                    validator:
+                        (v) => v == null || v.isEmpty ? "Required" : null,
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _dateController,
+                          readOnly: true,
+                          decoration: _inputDecoration("Date"),
+                          validator:
+                              (v) => v == null || v.isEmpty ? "Required" : null,
+                          onTap: () => _selectDate(context),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today, color: Colors.blue),
+                        onPressed: () => _selectDate(context),
                       ),
                     ],
                   ),
-                ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _timeController,
+                          readOnly: true,
+                          decoration: _inputDecoration("Time"),
+                          validator:
+                              (v) => v == null || v.isEmpty ? "Required" : null,
+                          onTap: () => _selectTime(context),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.access_time, color: Colors.blue),
+                        onPressed: () => _selectTime(context),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  DropdownButtonFormField<String>(
+                    decoration: _inputDecoration("Category"),
+                    value: selectedCategory,
+                    items:
+                        [
+                              'ASD',
+                              'ADHD',
+                              'Dyslexia',
+                              'Dyscalculia',
+                              'Dyspraxia',
+                              'Tourette Syndrome',
+                              'OCD',
+                              'Bipolar',
+                              'Anxiety',
+                            ]
+                            .map(
+                              (category) => DropdownMenuItem(
+                                value: category,
+                                child: Text(category),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCategory = value;
+                      });
+                    },
+                    validator:
+                        (v) => v == null || v.isEmpty ? "Required" : null,
+                  ),
+                  SizedBox(height: 10),
+                  _buildTextField(
+                    "Description",
+                    controller: _descriptionController,
+                    maxLines: 4,
+                    validator:
+                        (v) => v == null || v.isEmpty ? "Required" : null,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed:
+                        _isLoading || _eventCreated
+                            ? null
+                            : () =>
+                                _submitForm(token: token, creatorId: creatorId),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.lightBlueAccent,
+                      shape: StadiumBorder(),
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              _eventCreated ? 'Event Created' : 'Add Event',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                  ),
+                ],
               ),
             ),
-          );
-        } else {
-          return Scaffold(
-            body: Center(
-              child: Text('You must be logged in as admin to create an event. ${state.toString()}'),
-            ),
-          );
-        }
-      },
-    );
+          ),
+        ),
+        bottomNavigationBar: UserBottomNav(
+          currentIndex: _getCurrentIndex(context),
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            'You must be logged in as admin to create an event. ${authState.toString()}',
+          ),
+        ),
+      );
+    }
   }
 
   InputDecoration _inputDecoration(String label) {
