@@ -7,5 +7,13 @@ class UserEventRepository {
 
   UserEventRepository({required this.userEventService});
 
+  Future<UserEvent> createUserEvent(int userId, int eventId) async {
+    try {
+      return await userEventService.createUserEvent(userId, eventId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   
 }
